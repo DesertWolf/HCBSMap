@@ -14,20 +14,36 @@
     var map;
         $(document).ready(function(){
             map = new GMaps({
-                div: "#map",
+                div: '#map',
                 lat: 33.473653,
                 lng: -112.039036
-                
             });
             map.addMarker({
-            lat: 33.473653,
-            lng: -122.039036,
-            title: 'AASK',
-            infoWindow:  {
-                        content: '<p>Welcome to AASK</p>'
+                lat: 33.473653,
+                lng: -112.039036,
+                title: 'AASK',
+                infoWindow: {
+                    content: '<p>AASK Phoenix</p><p>2320 N 20th St</p>'
+                }
+            });
+
+            $('#geocode_home').submit(function(e) {
+                e.preventDefault();
+                GMaps.geocode({
+                    address: $('#address').val().trim(),
+                    callback: function(results, status){
+                        if(status=='OK'){
+                            var latlng = results[0].geometry.location;
+                            map.setCenter(latlng.lat(), latlng.lng());
+                            map.addMarker({lat: latlng.lat(),
+                                           lng: latlng.lng()
+                            });
+                        }
                     }
+                });
             });
         });
+
     </script>
     <!--[if IE]>
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -37,6 +53,13 @@
 <body id="home">
 
     <h1>HCBS Client Search</h1>
-    <div id="map"></div>
+    <form method="post" id="geocode_home">
+        <label for="address">Your Home Address:</label>
+        <div class="input">
+            <input type="text" id="address" name="address" />
+            <input type="submit" class="btn" value="Search"/>
+        </div>
+    </form>
+    <div id="map" class="large"></div>
 </body>
 </html>
