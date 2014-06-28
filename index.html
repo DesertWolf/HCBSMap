@@ -15,6 +15,7 @@
         Parse.initialize("LZ2tB5MBWI5vlyfSVGGWdBJUq8NJznafCU3jJwrV", "OolOrXs9MnHSZf86X4yQ0ZLEXfflpczQCRnANbIS");
     var map;
         $(document).ready(function(){
+            //Initalize map
             map = new GMaps({
                 div: '#map',
                 lat: 33.473653,
@@ -29,6 +30,7 @@
                 }
             }); //end of map initialize
 
+             //Enter provider address, geocode it and locate on map
             $('#geocode_home').submit(function(e) {
                 e.preventDefault();
                 GMaps.geocode({
@@ -44,7 +46,7 @@
                     }
                 });
             }); //end of geocode section
-
+            // pull client info from Parse and add to map
         });
 
     </script>
