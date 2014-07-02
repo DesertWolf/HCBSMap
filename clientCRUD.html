@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>AASK HCBS Client Search</title>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <title>AASK HCBS Client Insert</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
     <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
     <script type="text/javascript" src="js/gmaps/gmaps.js"></script>
@@ -17,6 +17,9 @@
         var ClientGeolocation = Parse.Object.extend("ClientGeolocation");
         var clientGeolocation = new ClientGeolocation;
 
+
+
+
         $(document).ready(function(){
 
             $('#geocode_clients').submit(function(e) {
@@ -26,17 +29,30 @@
                     callback: function (results, status) {
                         if (status == 'OK') {
                             var latlng = results[0].geometry.location;
+                            var point = new Parse.GeoPoint(latlng.lat(), latlng.lng());
+                            var clientGender = $('#gender').val();
+                            var clientAge = parseInt($('#age').val());
+                            var clientServices = $('#service').val();
+                            var clientTimes = $('#times').val();
+
 
                             clientGeolocation.save({
                                 lat: latlng.lat(),
-                                lng: latlng.lng()
+                                lng: latlng.lng(),
+                                gender: clientGender,
+                                age: clientAge,
+                                service: clientServices,
+                                times: clientTimes,
+                                location: point
+
                             }, {
                                 success: function(clientGeolocation){
                                     alert("yay! it worked");
                                 },
                                 error: function(clientGeolocation, error) {
-                                    alert("boo! it borked "+error);
+                                    alert("boo! it borked "+ error);
                                 }
+
 
                             });
                         }
@@ -53,14 +69,37 @@
 
 <body id="home">
 
-<h1>HCBS Client Search</h1>
+<h1>HCBS Client Insert</h1>
 <form method="post" id="geocode_clients">
-    <label for="address">Enter Clients Address:</label>
     <div class="input">
-        <input type="text" id="address" name="address" />
-        <input type="submit" class="btn" value="Search"/>
+    <label for="address">Enter Clients Address:</label>
+    <input type="text" id="address" name="address" />
+    </div>
+    <div class="input">
+    <label for="gender">Enter Clients Gender:</label>
+    <select  class="input" id="gender" name="gender">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+    </select>
+    </div>
+    <div class="input">
+    <label for="age" >Enter Clients Age: </label>
+        <input type="number" min="0" max="21" id="age" name="age"/>
+    </div>
+    <div class="input">
+    <label for="service">Enter Service Needed: </label>
+    <input type="text" id="service" name="service"/>
+    </div>
+    <div class="input">
+    <label for="times">Enter Times Needed: </label>
+    <input type="text" id="times" name="times"/>
+    </div>
+
+
+
+    <input type="submit" class="btn" value="Search"/>
     </div>
 </form>
-<div id="map" class="large"></div>
+
 </body>
 </html>
