@@ -19,23 +19,68 @@
         var point = new Parse.GeoPoint();
         var foundClients = [];
         var miles = 35;
+        var userGeoPoint;
 
         $(document).ready(function(){
-            var userGeoPoint = new Parse.GeoPoint({latitude: 33.473671, longitude:-112.039057});
-            var query = new Parse.Query(ClientGeolocation);
-            query.withinMiles('location', userGeoPoint,miles);
-            query.find({
-                success: function(placeObjects){
-                    alert("Found "+ placeObjects.length + " near "+JSON.stringify(placeObjects));
-                    for (var i = 0; i < placeObjects.length; i++) {
-                        foundClients.push(JSON.parse(JSON.stringify(placeObjects[i])));
-                    }
-                    alert(foundClients[0].lat+" "+foundClients[0].lng);
-
-                }, error: function(error) {
-                    alert("Error: " + error.code + " " + error.message);
+            //Initalize map
+            map = new GMaps({
+                div: '#map',
+                lat: 33.473653,
+                lng: -112.039036
+            });
+            map.addMarker({
+                lat: 33.473653,
+                lng: -112.039036,
+                title: 'AASK',
+                infoWindow: {
+                    content: '<p>AASK Phoenix</p><p>2320 N 20th St</p>'
                 }
-            })
+            }); //end of map initialize
+            //Enter provider address, geocode it and locate on map
+            $('#geocode_home').submit(function(e) {
+                e.preventDefault();
+                // geocode provider address and add marker to map and center map
+                GMaps.geocode({
+                    address: $('#address').val().trim(),
+                    callback: function(results, status){
+                        if(status=='OK'){
+                            var latlng = results[0].geometry.location;
+                            map.setCenter(latlng.lat(), latlng.lng());
+                            map.addMarker({lat: latlng.lat(),
+                                lng: latlng.lng()
+                            });
+                            userGeoPoint = new Parse.GeoPoint({latitude: latlng.lat(), longitude:latlng.lng()});
+                            var query = new Parse.Query(ClientGeolocation);
+                            miles = $('#distance').val();
+                            query.withinMiles('location', userGeoPoint,miles);
+                            query.find({
+                                success: function(placeObjects){
+                                    alert("Found "+ placeObjects.length + " near "+JSON.stringify(placeObjects));
+                                    for (var i = 0; i < placeObjects.length; i++) {
+                                        foundClients.push(JSON.parse(JSON.stringify(placeObjects[i])));
+                                        map.addMarker({lat: foundClients[i].lat,
+                                                        lng: foundClients[i].lng,
+                                                        infoWindow:{
+                                                            content:'<p>Gender: '+foundClients[i].gender+'</p>'+
+                                                                    '<p>Age: '+foundClients[i].age+'</p>'+
+                                                                    '<p>Services: '+ foundClients[i].service+'</p>'+
+                                                                    '<P>When: '+ foundClients[i].times+'</p>'
+
+
+                                                        }});
+                                    }
+                                }, error: function(error) {
+                                    alert("Error: " + error.code + " " + error.message);
+                                }
+                            });
+
+                        }
+                    }
+                });
+
+
+            }); //end submit form code
+
 
         });
 
@@ -48,7 +93,16 @@
 <body id="home">
 
 <h1>HCBS Clients In Your Area</h1>
-
+<form method="post" id="geocode_home">
+    <label for="address">Your Home Address:</label>
+    <div class="input">
+        <input type="text" id="address" name="address" />
+        <label for="distance">Select Distance From You</label>
+        <input type="number" id="distance" min="1" max="75" value="15" step="1"/>
+        <input type="submit" class="btn" value="Search"/>
+    </div>
+</form>
+<div id="map" class="large"></div>
 
 </body>
 </html>
