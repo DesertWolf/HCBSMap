@@ -7,95 +7,53 @@
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
     <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
     <script type="text/javascript" src="js/gmaps/gmaps.js"></script>
-    <link rel="stylesheet" type="text/css" href="http://twitter.github.com/bootstrap/1.3.0/bootstrap.min.css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/examples.css">
 
 
-    <script type="text/javascript">
-        Parse.initialize("LZ2tB5MBWI5vlyfSVGGWdBJUq8NJznafCU3jJwrV", "OolOrXs9MnHSZf86X4yQ0ZLEXfflpczQCRnANbIS");
-        var map;
-        var ClientGeolocation = Parse.Object.extend("ClientGeolocation");
-        var clientGeolocation = new ClientGeolocation;
-        var point = new Parse.GeoPoint();
-        var foundClients = [];
-        var miles = 35;
-        var userGeoPoint;
 
-        $(document).ready(function(){
-            //Initalize map
-            map = new GMaps({
-                div: '#map',
-                lat: 33.473653,
-                lng: -112.039036
-            });
-            map.addMarker({
-                lat: 33.473653,
-                lng: -112.039036,
-                title: 'AASK',
-                infoWindow: {
-                    content: '<p>AASK Phoenix</p><p>2320 N 20th St</p>'
-                }
-            }); //end of map initialize
-            //Enter provider address, geocode it and locate on map
-            $('#geocode_home').submit(function(e) {
-                e.preventDefault();
-                // geocode provider address and add marker to map and center map
-                GMaps.geocode({
-                    address: $('#address').val().trim(),
-                    callback: function(results, status){
-                        if(status=='OK'){
-                            var latlng = results[0].geometry.location;
-                            map.setCenter(latlng.lat(), latlng.lng());
-                            map.addMarker({lat: latlng.lat(),
-                                lng: latlng.lng()
-                            });
-                            userGeoPoint = new Parse.GeoPoint({latitude: latlng.lat(), longitude:latlng.lng()});
-                            var query = new Parse.Query(ClientGeolocation);
-                            miles = $('#distance').val();
-                            query.withinMiles('location', userGeoPoint,miles);
-                            query.find({
-                                success: function(placeObjects){
-                                    alert("Found "+ placeObjects.length + " near "+JSON.stringify(placeObjects));
-                                    for (var i = 0; i < placeObjects.length; i++) {
-                                        foundClients.push(JSON.parse(JSON.stringify(placeObjects[i])));
-                                        map.addMarker({lat: foundClients[i].lat,
-                                                        lng: foundClients[i].lng,
-                                                        infoWindow:{
-                                                            content:'<p>Gender: '+foundClients[i].gender+'</p>'+
-                                                                    '<p>Age: '+foundClients[i].age+'</p>'+
-                                                                    '<p>Services: '+ foundClients[i].service+'</p>'+
-                                                                    '<P>When: '+ foundClients[i].times+'</p>'
-
-
-                                                        }});
-                                    }
-                                }, error: function(error) {
-                                    alert("Error: " + error.code + " " + error.message);
-                                }
-                            });
-
-                        }
-                    }
-                });
-
-
-            }); //end submit form code
-
-
-        });
-
-    </script>
     <!--[if IE]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 </head>
 
 <body id="home">
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">AASK HCBS Provider Web</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <form class="navbar-form navbar-right" role="form">
+                <div class="form-group">
+                    <input type="text" placeholder="Email" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="Password" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-success">Sign in</button>
+            </form>
+        </div><!--/.navbar-collapse -->
+    </div>
+</div>
 
-<h1>HCBS Clients In Your Area</h1>
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+    <div class="container">
+        <h2>HCBS Client Locator</h2>
 <form method="post" id="geocode_home">
-    <label for="address">Your Home Address:</label>
+
     <div class="input">
+        <label for="address">Your Home Address:</label>
         <input type="text" id="address" name="address" />
         <label for="distance">Select Distance From You</label>
         <input type="number" id="distance" min="1" max="75" value="15" step="1"/>
@@ -103,6 +61,82 @@
     </div>
 </form>
 <div id="map" class="large"></div>
+        </div>
+    </div>
 
 </body>
+<script type="text/javascript">
+    Parse.initialize("LZ2tB5MBWI5vlyfSVGGWdBJUq8NJznafCU3jJwrV", "OolOrXs9MnHSZf86X4yQ0ZLEXfflpczQCRnANbIS");
+    var map;
+    var ClientGeolocation = Parse.Object.extend("ClientGeolocation");
+    var clientGeolocation = new ClientGeolocation;
+    var point = new Parse.GeoPoint();
+    var foundClients = [];
+    var miles = 35;
+    var userGeoPoint;
+
+    $(document).ready(function(){
+        //Initalize map
+        map = new GMaps({
+            div: '#map',
+            lat: 33.473653,
+            lng: -112.039036
+        });
+        map.addMarker({
+            lat: 33.473653,
+            lng: -112.039036,
+            title: 'AASK',
+            infoWindow: {
+                content: '<p>AASK Phoenix</p><p>2320 N 20th St</p>'
+            }
+        }); //end of map initialize
+        //Enter provider address, geocode it and locate on map
+        $('#geocode_home').submit(function(e) {
+            e.preventDefault();
+            // geocode provider address and add marker to map and center map
+            GMaps.geocode({
+                address: $('#address').val().trim(),
+                callback: function(results, status){
+                    if(status=='OK'){
+                        var latlng = results[0].geometry.location;
+                        map.setCenter(latlng.lat(), latlng.lng());
+                        map.addMarker({lat: latlng.lat(),
+                            lng: latlng.lng()
+                        });
+                        userGeoPoint = new Parse.GeoPoint({latitude: latlng.lat(), longitude:latlng.lng()});
+                        var query = new Parse.Query(ClientGeolocation);
+                        miles = $('#distance').val();
+                        query.withinMiles('location', userGeoPoint,miles);
+                        query.find({
+                            success: function(placeObjects){
+                                // alert("Found "+ placeObjects.length + " near "+JSON.stringify(placeObjects));
+                                for (var i = 0; i < placeObjects.length; i++) {
+                                    foundClients.push(JSON.parse(JSON.stringify(placeObjects[i])));
+                                    map.addMarker({lat: foundClients[i].lat,
+                                        lng: foundClients[i].lng,
+                                        infoWindow:{
+                                            content:'<p>Gender: '+foundClients[i].gender+'</p>'+
+                                                    '<p>Age: '+foundClients[i].age+'</p>'+
+                                                    '<p>Services: '+ foundClients[i].service+'</p>'+
+                                                    '<P>When: '+ foundClients[i].times+'</p>'
+
+
+                                        }});
+                                }
+                            }, error: function(error) {
+                                alert("Error: " + error.code + " " + error.message);
+                            }
+                        });
+
+                    }
+                }
+            });
+
+
+        }); //end submit form code
+
+
+    });
+
+</script>
 </html>
