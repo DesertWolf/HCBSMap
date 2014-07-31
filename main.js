@@ -42,10 +42,10 @@ function getClients(callback) {
 
 function showClients(Clients){
 
-    var theTemplateScript = $("#shoe-template").html();
+    var theTemplateScript = $("#listClients-template").html();
 
     //Compile the template
     var theTemplate = Handlebars.compile (theTemplateScript);
-    $(".shoesNav").append (theTemplate(Clients));
+    $(".clientListing").append (theTemplate(Clients));
 
 }
