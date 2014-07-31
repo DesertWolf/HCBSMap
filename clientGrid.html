@@ -3,11 +3,14 @@
 <head>
     <meta charset="utf-8">
     <title>AASK HCBS Client Insert</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
-
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/examples.css">
+    <script type="text/javascript" src="js/handlebars/handlebars-v1.3.0.js"></script>
+    <script type="text/javascript" src="main.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/examples.css">
 
 
@@ -18,31 +21,7 @@
 </head>
 
 <body id="home">
-<script type="text/javascript">
-    Parse.initialize("LZ2tB5MBWI5vlyfSVGGWdBJUq8NJznafCU3jJwrV", "OolOrXs9MnHSZf86X4yQ0ZLEXfflpczQCRnANbIS");
-        var Clients = [];
-        var ClientInfo = Parse.Object.extend("ClientGeolocation");
 
-        var query = new Parse.Query(ClientInfo);
-        query.notEqualTo("objectId", '');
-
-        query.find({
-            success: function (results) {
-                alert("Successfully retrieved " + results.length + " scores.");
-                // Do something with the returned Parse.Object values
-                for (var i = 0; i < results.length; i++) {
-                    var object = results[i];
-                    Clients.push(JSON.parse(JSON.stringify(results[i])));
-                    //alert(object.id + ' - ' + object.get('service'));
-                }
-                alert(Clients[0].age);
-            },
-            error: function (error) {
-                alert("Error: " + error.code + " " + error.message);
-            }
-        });
-
-</script>
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
@@ -75,8 +54,17 @@
         <h2>HCBS Client Grid</h2>
     </div>
 
-</div>
 
+
+</div>
+Current Open Clients
+
+<ul class="shoesNav"></ul>
+<script id="shoe-template" type="x-handlebars-template">
+    {{#each this}}
+    <li class="shoes">{{objectId}} - Age: {{age}} - Gender: {{gender}} - Service: {{service}} - Times: {{times}}</li>
+    {{/each}}
+</script>
 
 </body>
 
