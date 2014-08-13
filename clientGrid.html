@@ -62,7 +62,7 @@ Current Open Clients
 <ul class="clientListing"></ul>
 <script id="listClients-template" type="x-handlebars-template">
     {{#each this}}
-    <span class="clientList"> <a href="clientEdit/id:{{objectId}}" >Edit</a>   - Age: {{age}} - Gender: {{gender}} - Service: {{service}} - Times: {{times}}</span><br/>
+    <span class="clientList"> <a href="clientEdit/id:{{objectId}}" >Edit</a>   - Age: {{age}} - Gender: {{gender}} - Service: {{service}} - Times: {{times}} - <button id="del" value="{{objectId}}">Delete</button></span><br/>
     {{/each}}
 </script>
 
